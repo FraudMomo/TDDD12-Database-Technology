@@ -1,0 +1,3 @@
+Assumptions:
+1. TV Series can have no actors (e.g. cartoons w/o voice actors)
+2. An actor can also be a director

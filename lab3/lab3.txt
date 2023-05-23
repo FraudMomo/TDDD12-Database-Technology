@@ -1,0 +1,39 @@
+1.
+a) {C} -> {A, D}
+   {C} -> {A}			Decomposition
+   {C} -> {B, C}		Transitivity
+   {C} -> {B}			Decomposition
+
+b) {A} -> {B, C}
+   {A} -> {C}			Decomposition
+   {A} -> {A, D}		Transitivity
+   {A} -> {D}			Decomposition
+   {A, E} -> {F}		Pseudo-transitivity
+
+2.
+a) X  = {A}
+   X+ = {A, B, C}		{A} -> {B, C}
+   X+ = {A, B, C, D}		{C} -> {A, D}
+
+b) X  = {C, E}
+   X+ = {A, C, D, E}		{C} -> {A, D}
+   X+ = {A, B, C, D, E}		{A} -> {B, C}
+   X+ = {A, B, C, D, E, F}	{D, E} -> {F}
+
+3.
+a) {A, B} is the candidate key, since {A, B}+ is R.
+
+b) FD2 and FD3 violate the BCNF condition because E and D are not superkeys according to the
+   attribute closure algorithm.
+
+c) Ra1 = {E, F}			with FD2
+   Ra2 = {A, B, C, D, E}	with FD3 & FD4: {A, B} -> {C, D, E} (Decomposition rule)
+   
+   Rb1 = {D, B}			with FD3
+   Rb2 = {A, C, D, E}		with FD5: {A, D} -> {C, E} (Pseudo-transitivity rule w/ FD3 & FD4)
+
+4.
+a) FD3 is not a superkey, thus R is not in BCNF.
+
+b) R1 = {C, D}			with FD3
+   R2 = {A, B, C, E}		with FD4: {A, B, C} -> {E}

@@ -1,0 +1,82 @@
+Question 8.
+a) How can you protect the credit card information in the database from hackers?
+
+   - Prevent SQL injection attacks.
+   - Encrypt the credit card information.
+   - Create a separate database for payment information.
+   - Do not store credit card information at all.
+     Use a third party payment service like Klarna or PayPal,
+     and store only the transaction ID in the database.
+
+b) Give three advantages of using stored procedures in the database (and thereby
+   execute them on the server) instead of writing the same functions in the front-
+   end of the system (in for example java-script on a web-page)?
+
+   - Faster performance and more scalable.
+   - Easier for developers to maintain since backend code is separated from the frontend code.
+   - More secure, because we can control who has access and what they can do.
+
+Question 9.
+Open two MySQL sessions. We call one of them A and the other one B.
+Write START TRANSACTION; in both terminals.
+
+a) In session A, add a new reservation.
+
+   START TRANSACTION;
+   CALL addReservation("MIT","HOB",2010,1,"Monday","09:00:00",1,@a);
+
+b) Is this reservation visible in session B? Why? Why not?
+
+   No, because we did not commit the transaction in session A.
+
+c) What happens if you try to modify the reservation from A in B?
+   Explain what happens and why this happens and how this relates to the
+   concept of isolation of transactions.
+
+   "Lock wait timeout exceeded; try restarting transaction"
+   Query in session B times out, because the transaction in session A hasn't committed
+   yet and so the tuple is write locked. Therefore, we cannot modify the tuple in session B
+   due to the isolation of transactions.
+
+Question 10.
+a) Did overbooking occur when the scripts were executed? If so, why? If not, why not?
+
+   Overbooking did not occur since Session A paid for the reservation before, and so Session B's
+   payment did not go through. Session A started just before Session B.
+
+b) Can an overbooking theoretically occur? If an overbooking is possible,
+   in what order must the lines of code in your procedures/functions be executed.
+
+   If both sessions started exactly at the same time then overbooking may occur,
+   this happens specifically when both sessions go through the following line
+   at the same time:
+        IF (@FreeSeats > 0 AND @FreeSeats >= @totalPassengers)
+   Where @FreeSeats is the total of unpaid seats and @totalPassengers is the
+   total seats that the reservation / booking contains.
+
+c) Try to make the theoretical case occur in reality by simulating that multiple sessions
+   call the procedure at the same time. To specify the order in which the lines of code are
+   executed use the MySQL query SELECT sleep(5); which makes the session sleep for 5 seconds.
+   Note that it is not always possible to make the theoretical case occur, if not, motivate why.
+
+   Adding SELECT SLEEP(5) just before inserting into booking triggered an overbooking.
+   Cases where overbooking does not occur can be when the sessions start at different times,
+   or one session for some reason is delayed a little longer.
+
+d) Modify the testscripts so that overbookings are no longer possible using (some of) the commands:
+   START TRANSACTION, COMMIT, LOCK TABLES, UNLOCK TABLES, ROLLBACK, SAVEPOINT, and SELECT...FOR UPDATE.
+
+   LOCK TABLES Booking WRITE, Has_Reservation WRITE, Reservation WRITE, PaymentCard WRITE, WeeklySchedule READ, Weekday READ, Route READ, Year READ, Flight WRITE, Has_Ticket WRITE, Is_Contact WRITE;
+   CALL addPayment (@a, "Sauron",7878787878);
+   UNLOCK TABLES;
+
+Identify one case where a secondary index would be useful. Design the index,
+describe and motivate your design. (Do not implement this.)
+
+Two cases where a secondary index would be useful are in Passenger and Airport, where one might
+want to search for a passenger or airport by name instead of by passport number or airport code.
+For example, a user might want to search the database for a specific airport on the website.
+Implementing the secondary index would then look something like:
+
+CREATE INDEX IndexName
+ON Airport (`Name`);
